@@ -57,7 +57,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_ALLOWED_CHAT_IDS: ${{ secrets.TELEGRAM_ALLOWED_CHAT_IDS }}
-          TELEGRAM_TZ: ${{ vars.TELEGRAM_TZ }}
+          TELEGRAM_TZ: ${{ secrets.TELEGRAM_TZ }}
           FOOTY_BATCH_MODE: "1"
         run: .venv/bin/footy bot-tick
 
