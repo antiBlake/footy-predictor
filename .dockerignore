@@ -1,0 +1,10 @@
+.venv
+.env
+data
+models
+reports
+.git
+__pycache__
+.pytest_cache
+notebooks
+tests

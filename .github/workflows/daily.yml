@@ -1,0 +1,71 @@
+# Daily: refresh data -> retrain -> predict the next 7 days -> send the digest.
+# 06:30 UTC. Change the cron to move it; the digest goes out right after.
+# Run it manually (Actions tab -> daily -> Run workflow) for the first setup.
+name: daily
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: footy-state
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore Python environment
+        id: venv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-daily-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install
+        if: steps.venv.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --quiet ".[model,bot,understat]"
+
+      - name: Restore data and models
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data
+            models
+          key: footy-state-${{ github.run_id }}
+          restore-keys: footy-state-
+
+      # Past seasons come from the restored cache; only the current season is
+      # re-downloaded. With an empty cache (first run) everything is rebuilt (~4 min).
+      - name: Update, retrain, predict
+        run: .venv/bin/footy daily
+
+      - name: Save data and models
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data
+            models
+          key: footy-state-${{ github.run_id }}
+
+      - name: Send digest
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_CHAT_IDS: ${{ secrets.TELEGRAM_ALLOWED_CHAT_IDS }}
+          TELEGRAM_TZ: ${{ vars.TELEGRAM_TZ }}
+        run: .venv/bin/footy bot-digest

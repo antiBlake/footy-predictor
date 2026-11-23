@@ -1,0 +1,68 @@
+# Answers Telegram messages: every 5 minutes, fetch pending messages, reply, exit.
+# GitHub may start scheduled runs a few minutes late, so replies aren't instant.
+name: bot-tick
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+# Shared with daily.yml: never two runs touching the state cache at once.
+concurrency:
+  group: footy-state
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore Python environment
+        id: venv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-tick-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install
+        if: steps.venv.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --quiet ".[model,bot]"
+
+      - name: Restore data and models
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data
+            models
+          key: footy-state-${{ github.run_id }}
+          restore-keys: footy-state-
+
+      - name: Answer messages
+        id: tick
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_CHAT_IDS: ${{ secrets.TELEGRAM_ALLOWED_CHAT_IDS }}
+          TELEGRAM_TZ: ${{ vars.TELEGRAM_TZ }}
+          FOOTY_BATCH_MODE: "1"
+        run: .venv/bin/footy bot-tick
+
+      # Only when a message changed something (/refresh, /subscribe): keeps cache churn low.
+      - name: Save data and models
+        if: steps.tick.outputs.state_changed == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data
+            models
+          key: footy-state-${{ github.run_id }}

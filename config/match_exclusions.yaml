@@ -1,0 +1,13 @@
+# Matches that stay in the data but must NOT be used to train models, because
+# the recorded score is not the result of football actually played.
+# Applied in `footy build` as the `exclude_reason` column (NA = usable).
+#
+# Note: Serie A 2020-21 Verona v Roma is deliberately NOT here. It was awarded
+# 3-0 (ineligible player) but Football-Data keeps the on-pitch 0-0, which is a
+# genuine football result.
+
+- league: LIGUE1
+  season: 2016
+  home_team: Bastia
+  away_team: Lyon
+  reason: Abandoned at half-time 0-0 (crowd trouble); score in data is the awarded 0-3

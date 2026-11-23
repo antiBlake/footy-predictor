@@ -1,0 +1,41 @@
+# League registry. Adding a league = adding an entry here (plus team-name mappings later).
+# football_data_code: the division code used in https://www.football-data.co.uk/mmz4281/{season}/{code}.csv
+# openfootball_code: file name in https://github.com/openfootball/football.json/<season>/<code>.json
+# understat_name / soccerdata_id: identifiers for Understat (via soccerdata).
+
+leagues:
+  EPL:
+    name: Premier League
+    country: England
+    football_data_code: E0
+    openfootball_code: en.1
+    soccerdata_id: ENG-Premier League
+    understat_name: EPL
+  LALIGA:
+    name: La Liga
+    country: Spain
+    football_data_code: SP1
+    openfootball_code: es.1
+    soccerdata_id: ESP-La Liga
+    understat_name: La_liga
+  SERIEA:
+    name: Serie A
+    country: Italy
+    football_data_code: I1
+    openfootball_code: it.1
+    soccerdata_id: ITA-Serie A
+    understat_name: Serie_A
+  BUNDESLIGA:
+    name: Bundesliga
+    country: Germany
+    football_data_code: D1
+    openfootball_code: de.1
+    soccerdata_id: GER-Bundesliga
+    understat_name: Bundesliga
+  LIGUE1:
+    name: Ligue 1
+    country: France
+    football_data_code: F1
+    openfootball_code: fr.1
+    soccerdata_id: FRA-Ligue 1
+    understat_name: Ligue_1

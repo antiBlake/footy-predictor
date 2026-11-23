@@ -1,0 +1,25 @@
+# Periods when matches were played without crowds or with heavily restricted
+# crowds (COVID-19). Home advantage nearly vanished in these periods, so the
+# models get a `crowd_restricted` flag instead of learning a biased home edge.
+#
+# Dates are inclusive and deliberately coarse; edge cases are noted. Correct them
+# here if you have better data. They only affect the flag, nothing else.
+
+EPL:
+  - start: 2020-06-17   # restart after the suspension
+    end: 2021-05-16     # up to 10k fans returned for the last two rounds (from 18 May)
+    note: Brief 2k-fan window in some areas in Dec 2020 is ignored
+LALIGA:
+  - start: 2020-06-11
+    end: 2021-05-23
+SERIEA:
+  - start: 2020-06-20
+    end: 2021-05-23
+BUNDESLIGA:
+  - start: 2020-05-16
+    end: 2021-05-22
+    note: A few small partial crowds in Sep-Oct 2020 are ignored
+LIGUE1:
+  - start: 2020-08-21   # 2019-20 was never restarted
+    end: 2021-05-23
+    note: Crowds of up to 5,000 were allowed until late Oct 2020
