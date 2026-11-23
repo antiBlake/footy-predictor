@@ -63,7 +63,8 @@ def restricted(handler: Handler) -> Handler:
         if chat is None:
             return
         if chat.id not in context.bot_data["allowed"]:
-            log.warning("Rejected chat %s (%s)", chat.id, chat.username or chat.title)
+            # no chat ids or usernames in logs: Actions logs of a public repo are public
+            log.warning("Rejected a message from an unauthorised chat")
             if update.effective_message:
                 await update.effective_message.reply_text(
                     f"This is a private bot. Your chat id is {chat.id}.\n"
@@ -256,7 +257,7 @@ async def send_digest(tg_bot, bot_data: dict) -> int:
                 await tg_bot.send_message(chat_id, chunk, parse_mode=ParseMode.HTML)
             sent += 1
         except Exception:  # one bad chat must not stop the others
-            log.exception("digest to %s failed", chat_id)
+            log.exception("digest to one chat failed")
     return sent
 
 
