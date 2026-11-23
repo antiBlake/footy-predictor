@@ -300,6 +300,7 @@ async def job_bootstrap(context: ContextTypes.DEFAULT_TYPE) -> None:
 def build_application(token: str, svc: ServiceState | None = None,
                       subs: Subscribers | None = None, schedule_jobs: bool = True) -> Application:
     allowed = allowed_chat_ids()
+    log.info("Allowed chats configured: %d", len(allowed))  # count only: logs may be public
     if not allowed:
         log.warning("TELEGRAM_ALLOWED_CHAT_IDS is empty: the bot will only tell people their "
                     "chat id. Message it once, then add your id to .env.")
