@@ -91,7 +91,8 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     lines = ["<b>⚽ footy: Big 5 match predictions</b>", ""]
     lines += [f"/{c} – {fmt.esc(d)}" for c, d in COMMANDS]
     if os.environ.get("FOOTY_BATCH_MODE"):
-        lines += ["", "<i>I check for messages every few minutes, so replies aren't instant.</i>"]
+        lines += ["", "<i>I run on GitHub's best-effort timer, so replies can take a while "
+                      "(sometimes hours). The daily digest can also arrive late.</i>"]
     lines += ["", "<i>Probabilities from a model that matches the betting market in "
                   "backtests. For information, not betting advice.</i>"]
     await _send(update, "\n".join(lines))

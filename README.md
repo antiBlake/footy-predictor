@@ -258,7 +258,17 @@ Each morning, before the digest, the bot runs the full `update → fit → predi
 pipeline. Set `TELEGRAM_DAILY_PIPELINE=0` to skip it, for example if cron already runs
 `footy daily`. Model work runs in a background thread, so the bot keeps responding.
 
-**Keeping it running:** it only works while `footy bot` is running. Use a
+**Running on GitHub Actions (current setup):** `.github/workflows/tick.yml` answers
+messages and `daily.yml` refreshes, retrains, predicts and sends the digest. Data and
+models live in the Actions cache, and the token, chat IDs and timezone are in repo
+Secrets. **GitHub's scheduled runs are best effort:** in practice they arrive hours
+apart, so replies and the digest can be hours late. Telegram discards messages not
+fetched within 24 hours. For a reply now, run the `bot-tick` workflow manually
+(Actions tab, or `gh workflow run tick.yml`). Two ways to get fast replies:
+host `footy bot` on an always-on server, or have a Cloudflare Worker start the
+workflow when each message arrives.
+
+**Keeping it running elsewhere:** it only works while `footy bot` is running. Use a
 terminal or `tmux`, or a launchd agent / systemd service for an always-on machine.
 
 ## Players (Stage 7)
