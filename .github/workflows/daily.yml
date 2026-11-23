@@ -15,6 +15,10 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  FOOTY_ROOT: ${{ github.workspace }}
+  PYTHONUNBUFFERED: "1"
+
 jobs:
   daily:
     runs-on: ubuntu-latest

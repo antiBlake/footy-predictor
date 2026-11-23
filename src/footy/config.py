@@ -10,7 +10,19 @@ from pathlib import Path
 
 import yaml
 
-PROJECT_ROOT = Path(os.environ.get("FOOTY_ROOT", Path(__file__).resolve().parents[2]))
+def _find_project_root() -> Path:
+    """FOOTY_ROOT if set; else the source checkout this file lives in (editable install /
+    running from src); else the current directory. A regular `pip install .` puts this
+    file in site-packages, where parents[2] is not the project."""
+    if os.environ.get("FOOTY_ROOT"):
+        return Path(os.environ["FOOTY_ROOT"])
+    source_root = Path(__file__).resolve().parents[2]
+    if (source_root / "config" / "leagues.yaml").exists():
+        return source_root
+    return Path.cwd()
+
+
+PROJECT_ROOT = _find_project_root()
 CONFIG_DIR = PROJECT_ROOT / "config"
 DATA_DIR = Path(os.environ.get("FOOTY_DATA_DIR", PROJECT_ROOT / "data"))
 RAW_DIR = DATA_DIR / "raw"
